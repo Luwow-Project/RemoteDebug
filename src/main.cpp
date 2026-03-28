@@ -93,7 +93,7 @@ int main(int argc, char* argv[]) {
         engine.setDebuggerNewLuauCallback(debuggerCallback);
         engine.initialize();
 
-        debugger.initialize(engine.getMainState());
+        debugger.initialize(engine.getCurrentState());
         debugger.listen(remoteDebuggerPort);
 
         engine.run();

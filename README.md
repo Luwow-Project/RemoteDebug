@@ -10,9 +10,44 @@ This project contains the source for the Luwow Remote-Debug, which can be ran us
 
 Upon running, it will create a local server, which by using your IDE's debugger, can be connected to. After connecting, you should be able to see the details of your main Luau thread's stack.
 
+## Adding to your Project
+
+In your `.gitmodules` file, add the submodules below:
+
+```
+[submodule "extern/debug"]
+	path = extern/debug
+	url = https://github.com/Luwow-Project/RemoteDebug/
+[submodule "extern/luau"]
+	path = extern/luau
+	url = https://github.com/luau-lang/luau
+[submodule "extern/cppdap"]
+	path = extern/cppdap
+	url = https://github.com/sssooonnnggg/cppdap
+[submodule "extern/luau-debugger"]
+	path = extern/luau-debugger
+	url = https://github.com/sssooonnnggg/luau-debugger
+```
+
+You can also add these submodules using the `git submodule add` command in the terminal.
+
+After adding these submodules, you must then add these fields to your `CMakeLists.txt` file:
+
+```
+set(DEBUGGER_ROOT ${CMAKE_SOURCE_DIR}/extern/debug/src)
+set(CPP_DAP_ROOT ${CMAKE_SOURCE_DIR}/extern/cppdap)
+set(LUAU_DEBUGGER_ROOT ${CMAKE_SOURCE_DIR}/extern/luau-debugger)
+
+add_subdirectory(${DEBUGGER_ROOT})
+add_subdirectory(${CPP_DAP_ROOT})
+add_subdirectory(${LUAU_DEBUGGER_ROOT}/debugger)
+```
+
+Next, you have to configure your IDE to launch a debugger instance. Examples of how to do so are shown below.
+
 ### Visual Studio Code Configuration
 
-In Visual Studio Code, you can configure your `launch.json` file like below to use it.
+In Visual Studio Code, you can configure your `launch.json` file like below:
 
 ```json
 {
@@ -27,3 +62,9 @@ In Visual Studio Code, you can configure your `launch.json` file like below to u
     ]
 }
 ```
+
+-----
+
+After configuration, you can then proceed with the building process. When the building process finishes, you can start using the debugger executable.
+
+To learn more information about the building process, you can head over to the [documentation](https://luwow-project.github.io/Documentation/), or you can check out the [official release project](https://github.com/Luwow-Project/Release) of Luwow.

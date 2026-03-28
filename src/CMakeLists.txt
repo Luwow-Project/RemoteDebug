@@ -5,7 +5,7 @@ target_include_directories(Luwow.RemoteDebug PRIVATE
     ${LUAU_ROOT}/Compiler/include
     ${LUAU_ROOT}/CLI
     ${LUAU_ROOT}/Config/include
-    ${DEBUGGER_ROOT}/debugger/include
+    ${LUAU_DEBUGGER_ROOT}/debugger/include
     ${ENGINE_ROOT}
 )
 target_link_libraries(Luwow.RemoteDebug PRIVATE
