@@ -50,17 +50,13 @@ void debuggerCallback(lua_State* L, const std::string& path, bool is_entry)
 {
     if (!pDebugger) return;
     std::filesystem::path filePath(path);
-    if (filePath.is_relative()) {
-        filePath = std::filesystem::current_path() / filePath;
-    }
-    std::cout << "Loading file \"" << path << "\" and naming it \"" <<
-        filePath.string() << "\"" << std::endl;
+    std::cout << "Loading file \"" << path << "\" and naming it \"" << filePath.string() << "\"" << std::endl;
     pDebugger->onLuaFileLoaded(L, path, is_entry);
 };
 
 int main(int argc, char* argv[]) {
     if (argc < 3) {
-        std::cerr << "Usage: lremotedebug <port> <script.luau>" << std::endl;
+        std::cerr << "Usage: remotedebug <port> <script.luau>" << std::endl;
         std::cerr << "Note that port 59000 is recommended." << std::endl;
         return 1;
     }
@@ -83,9 +79,12 @@ int main(int argc, char* argv[]) {
     try
     {
         std::filesystem::path filePath = std::filesystem::path(argv[2]);
-        // if (filePath.is_relative()) {
-        //     filePath = std::filesystem::current_path() / filePath;
-        // }
+        if (filePath.is_relative()) {
+            filePath = std::filesystem::current_path() / filePath;
+        }
+
+        // Register the GUI module
+        Engine::registerInternalModule(std::make_shared<Luwow::Gui::GuiModule>());
 
         // Initialize the engine
         Engine engine((Package()), filePath);
@@ -93,7 +92,7 @@ int main(int argc, char* argv[]) {
         engine.setDebuggerNewLuauCallback(debuggerCallback);
         engine.initialize();
 
-        debugger.initialize(engine.getCurrentState());
+        debugger.initialize(engine.getMainState());
         debugger.listen(remoteDebuggerPort);
 
         engine.run();
