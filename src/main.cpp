@@ -82,10 +82,7 @@ int main(int argc, char* argv[]) {
         if (filePath.is_relative()) {
             filePath = std::filesystem::current_path() / filePath;
         }
-
-        // Register the GUI module
-        Engine::registerInternalModule(std::make_shared<Luwow::Gui::GuiModule>());
-
+        
         // Initialize the engine
         Engine engine((Package()), filePath);
         engine.setCompilerCallback(compilerCallback);
