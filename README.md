@@ -12,7 +12,16 @@ Upon running, it will create a local server, which by using your IDE's debugger,
 
 ## Adding to your Project
 
-In your `.gitmodules` file, add the submodules below:
+Use the git submodule add command to add the following submodules to your project:
+```bash
+git submodule add https://github.com/luau-lang/luau extern/luau
+git submodule add https://github.com/Luwow-Project/RemoteDebug/ extern/debug
+git submodule add https://github.com/sssooonnnggg/cppdap extern/cppdap
+git submodule add https://github.com/sssooonnnggg/luau-debugger extern/luau-debugger
+git submodule add https://github.com/Luwow-Project/GUI libraries/gui
+```
+
+In your `.gitmodules` file, the submodules should look something like:
 
 ```
 [submodule "extern/debug"]
@@ -27,20 +36,21 @@ In your `.gitmodules` file, add the submodules below:
 [submodule "extern/luau-debugger"]
 	path = extern/luau-debugger
 	url = https://github.com/sssooonnnggg/luau-debugger
+[submodule "libraries/gui"]
+	path = libraries/gui
+	url = https://github.com/Luwow-Project/GUI
 ```
-
-You can also add these submodules using the `git submodule add` command in the terminal.
 
 After adding these submodules, you must then add these fields to your `CMakeLists.txt` file:
 
 ```
-set(DEBUGGER_ROOT ${CMAKE_SOURCE_DIR}/extern/debug/src)
 set(CPP_DAP_ROOT ${CMAKE_SOURCE_DIR}/extern/cppdap)
 set(LUAU_DEBUGGER_ROOT ${CMAKE_SOURCE_DIR}/extern/luau-debugger)
+set(DEBUGGER_ROOT ${CMAKE_SOURCE_DIR}/extern/debug/src)
 
-add_subdirectory(${DEBUGGER_ROOT})
 add_subdirectory(${CPP_DAP_ROOT})
 add_subdirectory(${LUAU_DEBUGGER_ROOT}/debugger)
+add_subdirectory(${DEBUGGER_ROOT})
 ```
 
 Next, you have to configure your IDE to launch a debugger instance. Examples of how to do so are shown below.

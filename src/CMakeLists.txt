@@ -7,9 +7,17 @@ target_include_directories(Luwow.RemoteDebug PRIVATE
     ${LUAU_ROOT}/Config/include
     ${LUAU_DEBUGGER_ROOT}/debugger/include
     ${ENGINE_ROOT}
+if(WIN32)
+    ${GUI_ROOT}/src/Gui
+    ${GUI_ROOT}/src/Gui/Windows
+elseif(APPLE)
+    ${GUI_ROOT}/src/Gui
+    ${GUI_ROOT}/src/Gui/Mac
+endif()
 )
 target_link_libraries(Luwow.RemoteDebug PRIVATE
     Luwow.Engine
+    Luwow.Gui
     Luau.VM
     Luau.Compiler
     Luau.CLI.lib
