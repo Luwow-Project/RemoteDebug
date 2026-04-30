@@ -21,7 +21,7 @@ void compilerCallback(const std::filesystem::path& modulePath, std::string& resu
     );
     file.close();
     
-    std::cout << "Compiling \"" << modulePath << "\"" << std::endl;
+    std::cout << "[Debugger] Compiling \"" << modulePath << "\"" << std::endl;
 
     lua_CompileOptions options = {};
     options.optimizationLevel = 1;
@@ -50,9 +50,9 @@ luau::debugger::Debugger* pDebugger = nullptr;
 void debuggerCallback(lua_State* L, const std::string& path, bool is_entry)
 {
     if (!pDebugger) return;
-    std::filesystem::path filePath(path);
-    std::cout << "Loading file \"" << path << "\" and naming it \"" << filePath.string() << "\"" << std::endl;
-    pDebugger->onLuaFileLoaded(L, path, is_entry);
+    std::filesystem::path filePath = (std::filesystem::current_path() / std::filesystem::path(path)).lexically_normal();
+    std::cout << "[Debugger] Loading file \"" << path << "\" and naming it \"" << filePath.string() << "\"" << std::endl;
+    pDebugger->onLuaFileLoaded(L, filePath.string(), is_entry);
 };
 
 int main(int argc, char* argv[]) {
@@ -82,7 +82,7 @@ int main(int argc, char* argv[]) {
     {
         std::filesystem::path filePath = std::filesystem::path(argv[2]);
         if (filePath.is_relative()) {
-            filePath = std::filesystem::current_path() / filePath;
+            filePath = (std::filesystem::current_path() / filePath).lexically_normal();
         }
         
         // Initialize the engine
