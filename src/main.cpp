@@ -65,7 +65,7 @@ int main(int argc, char* argv[]) {
     int remoteDebuggerPort = std::atoi(argv[1]);
 
     // Put your own binary modules here and DLLs here
-    Engine::registerInternalModule(std::make_shared<Luwow::Gui::GuiModule>());
+    Engine::registerNativeModule(std::make_shared<Luwow::Gui::GuiModule>());
 
     // Initialize the luau-debugger component
     auto log_handler = [](std::string_view msg) {
