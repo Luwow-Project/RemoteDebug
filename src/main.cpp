@@ -88,7 +88,7 @@ int main(int argc, char* argv[]) {
         // Initialize the engine
         Engine engine((Package()), filePath);
         engine.setCompilerCallback(compilerCallback);
-        engine.setDebuggerNewLuauCallback(debuggerCallback);
+        engine.setDebuggerLuauCallback(debuggerCallback);
         engine.initialize(argc, argv);
 
         debugger.initialize(engine.getMainState());
