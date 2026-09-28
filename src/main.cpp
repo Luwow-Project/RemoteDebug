@@ -4,7 +4,7 @@
 #include <debugger.h>
 #include "luacode.h"
 #include "Engine.h"
-#include "GuiModule.h"
+// #include "GuiModule.h"
 
 using Engine = Luwow::Engine::Engine;
 using Package = Luwow::Engine::Package;
@@ -65,7 +65,9 @@ int main(int argc, char* argv[]) {
     int remoteDebuggerPort = std::atoi(argv[1]);
 
     // Put your own binary modules here and DLLs here
-    Engine::registerNativeModule(std::make_shared<Luwow::Gui::GuiModule>());
+
+    // TODO: Put this on the same architecture as the runscript DLL system
+    // Engine::registerNativeModule(std::make_shared<Luwow::Gui::GuiModule>()); 
 
     // Initialize the luau-debugger component
     auto log_handler = [](std::string_view msg) {
