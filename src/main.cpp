@@ -1,15 +1,18 @@
 #include <iostream>
 #include <fstream>
 #include <filesystem>
+#include <cstdlib>
 #include <debugger.h>
 #include "luacode.h"
 #include "Engine.h"
 
 using Engine = Luwow::Engine::Engine;
 using Package = Luwow::Engine::Package;
+using Message = Luwow::Engine::Message;
 
-// Compiles the script from the filesystem and returns the bytecode
-void compilerCallback(const std::filesystem::path& modulePath, std::string& resultingBytecode) {
+// Handles compiler-compile: compiles the script at message.data and replies with its bytecode
+void compileRequest(void* context, Message& message) {
+    std::filesystem::path modulePath(message.data);
     std::ifstream file(modulePath);
     if (!file.is_open()) {
         throw std::runtime_error("Failed to open script file: " + modulePath.string());
@@ -42,16 +45,18 @@ void compilerCallback(const std::filesystem::path& modulePath, std::string& resu
     if (!bytecode) {
         throw std::runtime_error("Failed to compile script: " + modulePath.string());
     }
-    resultingBytecode = std::string(bytecode, bytecodeSize);
+    message.data = std::string(bytecode, bytecodeSize);
+    free(bytecode);
 }
 
 luau::debugger::Debugger* pDebugger = nullptr;
-void debuggerCallback(lua_State* L, const std::string& path, bool is_entry)
+
+void debuggerRequest(void* context, Message& message)
 {
     if (!pDebugger) return;
-    std::filesystem::path filePath = (std::filesystem::current_path() / std::filesystem::path(path)).lexically_normal();
-    std::cout << "[Debugger] Loading file \"" << path << "\" and naming it \"" << filePath.string() << "\"" << std::endl;
-    pDebugger->onLuaFileLoaded(L, filePath.string(), is_entry);
+    std::filesystem::path filePath = (std::filesystem::current_path() / std::filesystem::path(message.data)).lexically_normal();
+    std::cout << "[Debugger] Loading file \"" << message.data << "\" and naming it \"" << filePath.string() << "\"" << std::endl;
+    pDebugger->onLuaFileLoaded(message.state, filePath.string(), true);
 };
 
 int main(int argc, char* argv[]) {
@@ -83,8 +88,8 @@ int main(int argc, char* argv[]) {
         
         // Initialize the engine
         Engine engine((Package()), filePath);
-        engine.setCompilerCallback(compilerCallback);
-        engine.setDebuggerLuauCallback(debuggerCallback);
+        engine.handle(Luwow::Engine::Topics::CompilerCompile, compileRequest, nullptr);
+        engine.handle(Luwow::Engine::Topics::DebuggerLoad, debuggerRequest, nullptr);
         engine.initialize(argc, argv);
 
         debugger.initialize(engine.getMainState());
